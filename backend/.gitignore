@@ -1,0 +1,19 @@
+# Environment secrets — NEVER commit these!
+.env
+*.env.local
+
+# Maven
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.xml.bak
+
+# Logs
+*.log
+logs/

@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db.epdptfeplapmwryrrupo.supabase.co:5432/postgres}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:OrchidMaple$43}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 300000
+      connection-test-query: SELECT 1
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+jwt:
+  secret: ${JWT_SECRET:3cfa76ef14937c1c0ea519f8fc057a80fcd04a7ac7e4cb5001d6a7f9b5a3e3d}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+groq:
+  api:
+    key: ${GROQ_API_KEY:mock-key}
+    base-url: https://api.groq.com/openai/v1
+    model: llama3-70b-8192
+
+app:
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+logging:
+  level:
+    com.fintech: DEBUG
+    org.springframework.security: INFO

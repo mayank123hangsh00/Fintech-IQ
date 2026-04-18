@@ -1,0 +1,27 @@
+version: '3.9'
+
+# PostgreSQL is now hosted on Supabase — no local postgres container needed!
+
+services:
+  backend:
+    build: ./backend
+    container_name: fintech-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db.epdptfeplapmwryrrupo.supabase.co:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      JWT_SECRET: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7ac7e4cb5001d6a7f9b5a3e3d
+      GROQ_API_KEY: ${GROQ_API_KEY:-mock-key}
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: fintech-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

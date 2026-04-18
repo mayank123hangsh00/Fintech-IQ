@@ -24,4 +24,10 @@ public class AuthController {
     public ResponseEntity<AuthDtos.AuthResponse> login(@Valid @RequestBody AuthDtos.LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
+
+    @PostMapping("/request-access")
+    public ResponseEntity<String> requestAccess(@Valid @RequestBody AuthDtos.RequestAccessDto request) {
+        authService.submitAccessRequest(request);
+        return ResponseEntity.ok("Request submitted successfully. Waiting for Admin approval.");
+    }
 }

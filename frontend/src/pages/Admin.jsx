@@ -9,13 +9,37 @@ function formatCurrency(val) {
 export default function Admin() {
   const [users, setUsers] = useState([]);
   const [stats, setStats] = useState({});
+  const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    Promise.all([adminApi.getUsers(), adminApi.getStats()])
-      .then(([u, s]) => { setUsers(u.data); setStats(s.data); })
+  const loadData = () => {
+    Promise.all([adminApi.getUsers(), adminApi.getStats(), adminApi.getAccessRequests()])
+      .then(([u, s, r]) => { setUsers(u.data); setStats(s.data); setRequests(r.data); })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
+
+  const handleApprove = async (id) => {
+    try {
+      const res = await adminApi.approveRequest(id);
+      alert(`User approved! Give them this temporary password securely: ${res.data.tempPassword}`);
+      loadData();
+    } catch (e) {
+      alert("Failed to approve: " + e.response?.data?.message);
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await adminApi.rejectRequest(id);
+      loadData();
+    } catch (e) {
+      alert("Failed to reject: " + e.response?.data?.message);
+    }
+  };
 
   if (loading) return <div className="loader"><div className="spinner" /></div>;
 
@@ -70,6 +94,54 @@ export default function Admin() {
                   </td>
                   <td style={{ color: 'var(--text-muted)', fontSize: 13 }}>
                     {u.createdAt ? format(new Date(u.createdAt), 'dd MMM yyyy') : 'N/A'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">📥 Access Requests</h3>
+          <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{requests.length} total</span>
+        </div>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Dept / Reason</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {requests.length === 0 && (
+                <tr><td colSpan="5" style={{textAlign: 'center', color: 'var(--text-muted)'}}>No requests pending</td></tr>
+              )}
+              {requests.map(r => (
+                <tr key={r.id}>
+                  <td><strong>{r.fullName}</strong></td>
+                  <td style={{ color: 'var(--text-muted)' }}>{r.email}</td>
+                  <td style={{ color: 'var(--text-muted)', fontSize: 13 }}>
+                    <div>{r.department}</div>
+                    <div><i>{r.reason}</i></div>
+                  </td>
+                  <td>
+                    <span className={`badge ${r.status === 'PENDING' ? 'badge-other' : r.status === 'INVITED' ? 'badge-credit' : 'badge-debit'}`}>
+                      {r.status}
+                    </span>
+                  </td>
+                  <td>
+                    {r.status === 'PENDING' && (
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button onClick={() => handleApprove(r.id)} className="btn btn-primary" style={{ padding: '4px 12px', fontSize: 12 }}>Approve</button>
+                        <button onClick={() => handleReject(r.id)} className="btn btn-ghost" style={{ padding: '4px 12px', fontSize: 12 }}>Reject</button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

@@ -4,6 +4,7 @@ import { useSSE } from './hooks/useSSE';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import RequestAccess from './pages/RequestAccess';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Analytics from './pages/Analytics';
@@ -27,6 +28,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
         <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register />} />
+        <Route path="/request-access" element={isAuthenticated ? <Navigate to="/dashboard" /> : <RequestAccess />} />
 
         <Route path="/dashboard" element={
           <ProtectedRoute>

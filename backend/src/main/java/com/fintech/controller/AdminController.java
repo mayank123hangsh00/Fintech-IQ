@@ -22,6 +22,12 @@ public class AdminController {
     @Autowired
     private MonthlyReportRepository reportRepository;
 
+    @Autowired
+    private com.fintech.repository.AccessRequestRepository accessRequestRepository;
+
+    @Autowired
+    private com.fintech.service.AuthService authService;
+
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
@@ -40,5 +46,22 @@ public class AdminController {
             "totalUsers", userCount,
             "totalReports", reportCount
         ));
+    }
+
+    @GetMapping("/access-requests")
+    public ResponseEntity<?> getAccessRequests() {
+        return ResponseEntity.ok(accessRequestRepository.findAll());
+    }
+
+    @PostMapping("/access-requests/{id}/approve")
+    public ResponseEntity<?> approveAccessRequest(@PathVariable Long id) {
+        String tempPassword = authService.approveAccessRequest(id);
+        return ResponseEntity.ok(java.util.Map.of("message", "User approved.", "tempPassword", tempPassword));
+    }
+
+    @PostMapping("/access-requests/{id}/reject")
+    public ResponseEntity<?> rejectAccessRequest(@PathVariable Long id) {
+        authService.rejectAccessRequest(id);
+        return ResponseEntity.ok(java.util.Map.of("message", "Request rejected."));
     }
 }

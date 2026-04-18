@@ -21,6 +21,19 @@ public class AuthDtos {
     }
 
     @Data
+    public static class RequestAccessDto {
+        @NotBlank(message = "Full name is required")
+        private String fullName;
+
+        @Email(message = "Valid email is required")
+        @NotBlank
+        private String email;
+
+        private String department;
+        private String reason;
+    }
+
+    @Data
     public static class LoginRequest {
         @Email
         @NotBlank

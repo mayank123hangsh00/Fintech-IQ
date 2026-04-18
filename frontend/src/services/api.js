@@ -30,6 +30,7 @@ api.interceptors.response.use(
 export const authApi = {
   login: (data) => api.post('/auth/login', data),
   register: (data) => api.post('/auth/register', data),
+  requestAccess: (data) => api.post('/auth/request-access', data)
 };
 
 export const transactionApi = {
@@ -49,6 +50,9 @@ export const adminApi = {
   getUsers: () => api.get('/admin/users'),
   getStats: () => api.get('/admin/stats'),
   getReports: () => api.get('/admin/reports'),
+  getAccessRequests: () => api.get('/admin/access-requests'),
+  approveRequest: (id) => api.post(`/admin/access-requests/${id}/approve`),
+  rejectRequest: (id) => api.post(`/admin/access-requests/${id}/reject`),
 };
 
 export const SSE_URL = `${API_BASE}/api/notifications/stream`;

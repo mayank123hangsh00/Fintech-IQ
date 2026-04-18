@@ -24,12 +24,13 @@
 | Feature | Description |
 |---------|-------------|
 | 🔐 **JWT Authentication** | Spring Security 6 with role-based access (ADMIN / USER) |
-| 🤖 **AI Categorization** | Groq llama3-70b auto-categorizes every transaction |
+| 🤖 **AI Categorization** | Groq llama3-8b auto-categorizes every transaction |
 | 🚨 **Fraud Detection** | AI anomaly detection with LOW / MEDIUM / HIGH severity |
+| 🚪 **Access Requests** | Employees request access; Admins approve and issue secure passwords |
 | 📡 **Live Streaming** | Spring WebFlux SSE — real-time fraud alerts in browser |
 | 📊 **Monthly Reports** | Cron-scheduled AI financial health reports |
 | 📈 **Analytics Charts** | 6-month income/expense trends via Recharts |
-| 🛡️ **Admin Panel** | User management, platform stats (ADMIN role only) |
+| 🛡️ **Admin Panel** | User management, platform stats, access control (ADMIN role only) |
 | 🌐 **Supabase DB** | Cloud PostgreSQL with auto-schema via JPA DDL |
 | 🐳 **Docker Ready** | Full docker-compose for production deployment |
 
@@ -210,8 +211,9 @@ start.bat
 
 ### Auth (Public)
 ```
-POST   /api/auth/register     → Register new user → returns JWT
-POST   /api/auth/login        → Login → returns JWT
+POST   /api/auth/register       → Register new user → returns JWT
+POST   /api/auth/login          → Login → returns JWT
+POST   /api/auth/request-access → Submit access request for Admin approval
 ```
 
 ### Transactions (🔒 JWT Required)
@@ -240,9 +242,12 @@ Events emitted:
 
 ### Admin (🔒 ROLE_ADMIN Only)
 ```
-GET    /api/admin/users        → All registered users
-GET    /api/admin/reports      → All reports across all users
-GET    /api/admin/stats        → Platform stats (user count, report count)
+GET    /api/admin/users                        → All registered users
+GET    /api/admin/reports                      → All reports across all users
+GET    /api/admin/stats                        → Platform stats
+GET    /api/admin/access-requests              → View pending employee requests
+POST   /api/admin/access-requests/{id}/approve → Approve, auto-create user, return secure password
+POST   /api/admin/access-requests/{id}/reject  → Mark request as rejected
 ```
 
 ### Health
@@ -322,6 +327,18 @@ If anomalous → pushNotification() via SSE → Browser popup
 | category_breakdown | TEXT | JSON string |
 | ai_insights | TEXT | Groq-generated narrative |
 | generated_at | TIMESTAMP | Auto |
+
+### `access_requests`
+| Column | Type | Notes |
+|--------|------|-------|
+| id | BIGSERIAL | Primary key |
+| full_name | VARCHAR | |
+| email | VARCHAR | Unique |
+| department | VARCHAR | |
+| reason | VARCHAR | |
+| status | VARCHAR | `PENDING`/`INVITED`/`REJECTED` |
+| requested_at | TIMESTAMP | Auto |
+| reviewed_at | TIMESTAMP | |
 
 ---
 

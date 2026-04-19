@@ -11,9 +11,9 @@
 [![Groq AI](https://img.shields.io/badge/Groq-llama3--70b-f55036?style=flat-square)](https://groq.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-**An enterprise-grade banking dashboard powered by Spring Boot, Supabase PostgreSQL, and Groq AI (llama3-70b). Automatically categorizes transactions, detects fraud anomalies, streams live alerts, and generates monthly AI financial health reports.**
+**An enterprise-grade banking dashboard powered by Spring Boot, Supabase PostgreSQL, and Groq AI (llama3-8b). Automatically categorizes transactions, detects fraud anomalies, streams live alerts, and generates monthly AI financial health reports.**
 
-[▶ Live Demo](#-quick-start) · [📖 API Docs](#-api-endpoints) · [🏗️ Architecture](#-architecture)
+[▶ Live App (Vercel)](https://fintech-iq.vercel.app) · [⚙️ Backend API (Render)](https://fintech-iq.onrender.com) · [📖 API Docs](#-api-endpoints) · [🏗️ Architecture](#-architecture)
 
 </div>
 
@@ -373,29 +373,18 @@ Services:
 
 ---
 
-## 🚀 Production Deployment (AWS EC2)
+## ☁️ Live Cloud Deployment Architecture
 
-```bash
-# 1. SSH into EC2 instance
-ssh -i key.pem ec2-user@your-ec2-ip
+This project is deployed using a decoupled, serverless-friendly cloud architecture to ensure maximum uptime and zero-configuration scaling:
 
-# 2. Install Docker
-sudo yum install docker -y && sudo service docker start
+*   **Frontend (Vercel):** The React Vite application is edge-deployed on Vercel. Requests are routed dynamically via the `VITE_API_URL` environment variable.
+*   **Backend API (Render):** The Spring Boot API runs as a containerized web service on Render. It handles all business logic, Groq AI integrations, and strict CORS filtering (`CORS_ORIGINS`).
+*   **Database (Supabase):** The PostgreSQL database uses Supabase's **IPv4 Transaction/Session Pooler** (Port `6543`) to guarantee compatibility with Render's IPv4 network architecture.
 
-# 3. Clone repo
-git clone https://github.com/YOUR_USERNAME/fintech-iq.git && cd fintech-iq/Transaction
-
-# 4. Set environment variables
-export SPRING_DATASOURCE_PASSWORD=your_pass
-export GROQ_API_KEY=your_groq_key
-
-# 5. Build and run
-docker-compose up --build -d
-
-# App available at: http://your-ec2-ip:3000
-```
-
-> **Note:** Supabase is already cloud-hosted so no RDS setup needed. Just point the JDBC URL to your Supabase project.
+### Deployment Variables Walkthrough:
+1. **Frontend to Backend:** `VITE_API_URL` -> `https://fintech-iq.onrender.com`
+2. **Backend to Database:** `SPRING_DATASOURCE_URL` -> Base JDBC paired with `pooler.supabase.com:6543`
+3. **Backend CORS:** `CORS_ORIGINS` -> `https://fintech-iq.vercel.app`
 
 ---
 
@@ -408,7 +397,7 @@ docker-compose up --build -d
 | **Security** | Spring Security 6 + JJWT 0.12.6 |
 | **Database ORM** | Spring Data JPA + Hibernate 6 |
 | **Database** | Supabase (PostgreSQL 15) |
-| **AI Model** | Groq API — llama3-70b-8192 |
+| **AI Model** | Groq API — llama3-8b-8192 |
 | **Streaming** | Spring WebFlux SSE |
 | **Scheduling** | Spring `@EnableScheduling` |
 | **HTTP Client** | Spring 6.1 RestClient |

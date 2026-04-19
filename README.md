@@ -19,6 +19,17 @@
 
 ---
 
+## 📸 Application Screenshots
+
+<div align="center">
+  <img src="assets/dashboard.png" width="800" alt="FintechIQ Dashboard" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
+  <br/>
+  <img src="assets/transactions.png" width="400" alt="Transactions Panel" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-right: 10px;">
+  <img src="assets/analytics.png" width="400" alt="Analytics Charts" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+</div>
+
+---
+
 ## ✨ Features
 
 | Feature | Description |
